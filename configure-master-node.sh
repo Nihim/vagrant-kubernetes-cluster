@@ -25,7 +25,7 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ##For vagrant user
 mkdir -p /home/vagrant/.kube
 sudo cp -f /etc/kubernetes/admin.conf /home/vagrant/.kube/config
-sudo chown 900:900 /home/vagrant/.kube/config
+sudo chown 1000:1000 /home/vagrant/.kube/config
 }
 
 install_network_cni ()

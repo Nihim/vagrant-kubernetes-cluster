@@ -10,13 +10,19 @@ To create VMs with vagrant, you need to install:
 
 # Usage
 
+You need to add your public ssh key in add-user-pub-key.sh:
+```
+#! /bin/sh
+echo '<your pub key here>' >> /home/vagrant/.ssh/authorized_keys
+```
+
 To create VMs and bootstrap your kubernetes cluster
 
 `vagrant up`
 
 After creation of VMs is complete ssh into master and check kubernetes cluster status
 
-`vagrant ssh master`
+`vagrant ssh master` or connect via NAT / host-only adapter using your key
 
 `kubectl get nodes`
 
@@ -27,3 +33,5 @@ To check your kubernetes cluster, you can create an nginx deployment and expose 
 After deployment you can check your page with 
 
 `curl http://<worker-ip>:30080`
+
+If you prefer to configure kubernetes yourself you can set `K8_BOOTSTRAP = false` in the Vagrantfile.

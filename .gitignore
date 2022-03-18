@@ -1,1 +1,3 @@
 .vagrant
+add-user-pub-key.sh
+join_command.sh
