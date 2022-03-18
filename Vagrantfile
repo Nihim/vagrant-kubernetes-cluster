@@ -37,10 +37,10 @@ Vagrant.configure("2") do |config|
 
       if K8_BOOTSTRAP == true then
         if box.vm.hostname == "v-master" then
-          box.vm.provision "shell", path:"./configure-master-node.sh"
-          end
+          box.vm.provision "shell", path:"configure-master-node.sh"
+        end
         if box.vm.hostname.include? "node" then
-          box.vm.provision "shell", path:"./configure-worker-nodes.sh"
+          box.vm.provision "shell", path:"configure-worker-nodes.sh"
         end
       end
 

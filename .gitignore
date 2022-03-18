@@ -1,3 +1,4 @@
 .vagrant
 add-user-pub-key.sh
 join_command.sh
+/vagrant_share/master_node.pub

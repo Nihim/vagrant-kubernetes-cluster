@@ -32,8 +32,14 @@ install_network_cni ()
 {
 kubectl apply -f /vagrant/kube-flannel.yml
 }
+create_master_node_key ()
+{
+su - vagrant -c "ssh-keygen -q -t ed25519 -N '' -f /home/vagrant/.ssh/id_ed25519"
+cp /home/vagrant/.ssh/id_ed25519.pub /vagrant/master_node.pub
+}
 
 initialize_master_node
 configure_kubectl
 install_network_cni
 create_join_command
+create_master_node_key
