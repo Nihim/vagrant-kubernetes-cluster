@@ -8,7 +8,7 @@ NODE_01_IP      = "172.16.8.11"
 NODE_02_IP      = "172.16.8.12"
 
 Vagrant.configure("2") do |config|
-  config.ssh.insert_key = false
+  config.ssh.insert_key = true
   config.vm.box = "ubuntu/focal64"
   config.vm.synced_folder "vagrant_share/", "/vagrant"
 
@@ -29,11 +29,11 @@ Vagrant.configure("2") do |config|
         vb.memory = opts[:memory]
         vb.name = opts[:name]
         vb.customize ["modifyvm", :id, "--vram", "16"]
-        # vb.customize ["modifyvm", :id, "--graphicscontroller", "vmsvga"]
+        vb.customize ["modifyvm", :id, "--graphicscontroller", "vmsvga"]
         vb.customize ["modifyvm", :id, "--vrde", "off"]
       end
-      box.vm.provision "shell", path:"install-kubernetes-dependencies.sh"
       box.vm.provision "shell", path:"add-user-pub-key.sh" if(File.exist?('add-user-pub-key.sh'))
+      box.vm.provision "shell", path:"install-kubernetes-dependencies.sh"
 
       if K8_BOOTSTRAP == true then
         if box.vm.hostname == "v-master" then
