@@ -2,7 +2,7 @@
 
 get_join_command ()
 {
-sudo /vagrant/join_command.sh
+/vagrant/join_command.sh
 }
 add_master_node_key ()
 {

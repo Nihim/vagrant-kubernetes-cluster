@@ -5,9 +5,9 @@ pod_network_cidr=192.168.0.0/16
 
 initialize_master_node ()
 {
-sudo systemctl enable kubelet
-sudo kubeadm config images pull
-sudo kubeadm init --apiserver-advertise-address=$master_node --pod-network-cidr=$pod_network_cidr --ignore-preflight-errors=NumCPU
+systemctl enable kubelet
+kubeadm config images pull
+kubeadm init --apiserver-advertise-address=$master_node --pod-network-cidr=$pod_network_cidr --ignore-preflight-errors=NumCPU
 }
 
 create_join_command ()
@@ -19,13 +19,13 @@ chmod +x /vagrant/join_command.sh
 configure_kubectl () 
 {
 mkdir -p $HOME/.kube
-sudo cp -f /etc/kubernetes/admin.conf $HOME/.kube/config
-sudo chown $(id -u):$(id -g) $HOME/.kube/config
+cp -f /etc/kubernetes/admin.conf $HOME/.kube/config
+chown $(id -u):$(id -g) $HOME/.kube/config
 
 ##For vagrant user
 mkdir -p /home/vagrant/.kube
-sudo cp -f /etc/kubernetes/admin.conf /home/vagrant/.kube/config
-sudo chown 1000:1000 /home/vagrant/.kube/config
+cp -f /etc/kubernetes/admin.conf /home/vagrant/.kube/config
+chown -R 1000:1000 /home/vagrant/.kube
 }
 
 install_network_cni ()

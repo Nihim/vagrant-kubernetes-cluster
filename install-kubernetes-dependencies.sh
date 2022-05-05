@@ -3,18 +3,18 @@
 
 install_required_packages ()
 {
-sudo apt update
-sudo apt -y install curl apt-transport-https
-curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
-sudo apt update
-sudo apt -y install vim git curl wget kubelet=1.22.6-00 kubeadm=1.22.6-00 kubectl=1.22.6-00
-sudo apt-mark hold kubelet kubeadm kubectl
+apt update && apt upgrade -y
+apt -y install curl apt-transport-https ca-certificates
+curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list
+apt update
+apt -y install vim git curl wget kubelet=1.22.6-00 kubeadm=1.22.6-00 kubectl=1.22.6-00
+apt-mark hold kubelet kubeadm kubectl
 }
 
 configure_hosts_file ()
 {
-sudo tee /etc/hosts<<EOF
+tee /etc/hosts<<EOF
 172.16.8.10 v-master
 172.16.8.11 v-node-01
 172.16.8.12 v-node-02
@@ -23,32 +23,32 @@ EOF
 
 disable_swap () 
 {
-sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
-sudo swapoff -a
+sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+swapoff -a
 }
 
 configure_sysctl ()
 {
-sudo modprobe overlay
-sudo modprobe br_netfilter
-sudo tee /etc/sysctl.d/kubernetes.conf<<EOF
+modprobe overlay
+modprobe br_netfilter
+tee /etc/sysctl.d/kubernetes.conf<<EOF
 net.bridge.bridge-nf-call-ip6tables = 1
 net.bridge.bridge-nf-call-iptables = 1
 net.ipv4.ip_forward = 1
 EOF
-sudo sysctl --system
+sysctl --system
 }
 
 install_docker_runtime () 
 {
-sudo apt update
-sudo apt install -y curl gnupg2 software-properties-common apt-transport-https ca-certificates
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-sudo apt update
-sudo apt install -y containerd.io docker-ce docker-ce-cli
-sudo mkdir -p /etc/systemd/system/docker.service.d
-sudo tee /etc/docker/daemon.json <<EOF
+apt update
+apt install -y ca-certificates curl gnupg lsb-release
+curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" > /etc/apt/sources.list.d/docker.list
+apt update
+apt install -y containerd.io docker-ce docker-ce-cli
+mkdir -p /etc/systemd/system/docker.service.d
+tee /etc/docker/daemon.json <<EOF
 {
   "exec-opts": ["native.cgroupdriver=systemd"],
   "log-driver": "json-file",
@@ -59,9 +59,9 @@ sudo tee /etc/docker/daemon.json <<EOF
 }
 EOF
 
-sudo systemctl daemon-reload 
-sudo systemctl restart docker
-sudo systemctl enable docker
+systemctl daemon-reload
+systemctl restart docker
+systemctl enable docker
 
 sed -i 's/plugins.cri.systemd_cgroup = false/plugins.cri.systemd_cgroup = true/' /etc/containerd/config.toml
 }
