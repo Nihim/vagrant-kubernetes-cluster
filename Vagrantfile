@@ -3,9 +3,8 @@
 
 K8_BOOTSTRAP    = true
 
-MASTER_IP       = "172.16.8.10"
-NODE_01_IP      = "172.16.8.11"
-NODE_02_IP      = "172.16.8.12"
+MASTER_IP       = "172.16.8.20"
+NODE_01_IP      = "172.16.8.21"
 
 Vagrant.configure("2") do |config|
   config.ssh.insert_key = true
@@ -13,9 +12,8 @@ Vagrant.configure("2") do |config|
   config.vm.synced_folder "vagrant_share/", "/vagrant"
 
   boxes = [
-    { :name => "v-master",  :ip => MASTER_IP,  :cpus => 1, :memory => 4096 },
-    { :name => "v-node-01", :ip => NODE_01_IP, :cpus => 1, :memory => 3072 },
-    { :name => "v-node-02", :ip => NODE_02_IP, :cpus => 2, :memory => 3072 },
+    { :name => "v-cka",  :ip => MASTER_IP,  :cpus => 1, :memory => 4096 },
+    { :name => "v-ckanode-01", :ip => NODE_01_IP, :cpus => 1, :memory => 3072 },
   ]
   # additional boxes should also be configured in install-kubernetes-dependencies.sh:configure_hosts_file
 
@@ -36,7 +34,7 @@ Vagrant.configure("2") do |config|
       box.vm.provision "shell", path:"install-kubernetes-dependencies.sh"
 
       if K8_BOOTSTRAP == true then
-        if box.vm.hostname == "v-master" then
+        if box.vm.hostname == "v-cka" then
           box.vm.provision "shell", path:"configure-master-node.sh"
         end
         if box.vm.hostname.include? "node" then

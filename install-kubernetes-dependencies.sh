@@ -8,16 +8,15 @@ apt -y install curl apt-transport-https ca-certificates
 curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
 echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list
 apt update
-apt -y install vim git curl wget kubelet=1.22.6-00 kubeadm=1.22.6-00 kubectl=1.22.6-00
+apt -y install vim git curl wget kubelet=1.24.6-00 kubeadm=1.24.6-00 kubectl=1.24.6-00
 apt-mark hold kubelet kubeadm kubectl
 }
 
 configure_hosts_file ()
 {
 tee /etc/hosts<<EOF
-172.16.8.10 v-master
-172.16.8.11 v-node-01
-172.16.8.12 v-node-02
+172.16.8.20 v-cka
+172.16.8.21 v-ckanode-01
 EOF
 }
 
@@ -64,6 +63,8 @@ systemctl restart docker
 systemctl enable docker
 
 sed -i 's/plugins.cri.systemd_cgroup = false/plugins.cri.systemd_cgroup = true/' /etc/containerd/config.toml
+sed -i 's/disabled_plugins = \["cri"\]/#&/' /etc/containerd/config.toml
+systemctl restart containerd
 }
 
 install_required_packages
